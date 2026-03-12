@@ -99,10 +99,12 @@ export function useQuickLinks() {
       newData.items.push(item);
     } else {
       const target = findItemById(newData.items, targetContainerId);
-      if (target?.isContainer) {
-        if (!target.children) target.children = [];
-        target.children.push(item);
+      if (!target?.isContainer) {
+        // Target gone — abort without persisting
+        return;
       }
+      if (!target.children) target.children = [];
+      target.children.push(item);
     }
 
     await persistStore(newData);

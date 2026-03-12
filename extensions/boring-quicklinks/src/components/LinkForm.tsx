@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Form, Icon, showToast, Toast, useNavigation } from "@raycast/api";
+import { Action, ActionPanel, Alert, confirmAlert, Form, Icon, showToast, Toast, useNavigation } from "@raycast/api";
 import { randomUUID } from "crypto";
 import { useState } from "react";
 import { useQuickLinks } from "../hooks/useQuickLinks";
@@ -59,6 +59,19 @@ export function LinkForm({ existingLink, parentId }: LinkFormProps) {
       .filter(Boolean);
 
     if (existingLink) {
+      // Warn if unchecking container with children
+      if (existingLink.isContainer && !values.isContainer) {
+        const childCount = existingLink.children?.length ?? 0;
+        if (childCount > 0) {
+          const confirmed = await confirmAlert({
+            title: `Remove container "${existingLink.name}"?`,
+            message: `This will permanently delete ${childCount} item${childCount !== 1 ? "s" : ""} inside it.`,
+            primaryAction: { title: "Remove Container", style: Alert.ActionStyle.Destructive },
+          });
+          if (!confirmed) return;
+        }
+      }
+
       // Full replacement of editable fields — preserves id, useCount, lastUsedAt, children
       const updated: QuickLink = {
         ...existingLink,
