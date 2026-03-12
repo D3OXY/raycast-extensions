@@ -1,0 +1,65 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "boring-quicklinks",
+  "title": "Boring Quick Links",
+  "description": "Emoji-picker-style grid for managing and quickly opening URLs, files, folders, and apps with nested containers",
+  "icon": "command-icon.png",
+  "author": "deoxy",
+  "categories": [
+    "Productivity",
+    "Applications"
+  ],
+  "license": "MIT",
+  "platforms": ["macOS"],
+  "commands": [
+    {
+      "name": "browse-quicklinks",
+      "title": "Browse Quick Links",
+      "subtitle": "Boring Quick Links",
+      "description": "Open the quick links grid to browse, search, and open your links",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "search",
+          "placeholder": "Search",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "add-link",
+      "title": "Add Quick Link",
+      "subtitle": "Boring Quick Links",
+      "description": "Add a new quick link or container",
+      "mode": "view"
+    },
+    {
+      "name": "import-export",
+      "title": "Import/Export Quick Links",
+      "subtitle": "Boring Quick Links",
+      "description": "Import or export your quick links as JSON via clipboard",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.83.0",
+    "@raycast/utils": "^1.17.0",
+    "simple-icons": "^16.11.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "22.10.2",
+    "@types/react": "19.0.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
