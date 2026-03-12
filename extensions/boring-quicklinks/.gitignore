@@ -21,6 +21,9 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 
+# Deoxy
+.deoxy/
+
 # Environment
 .env
 .env.local
