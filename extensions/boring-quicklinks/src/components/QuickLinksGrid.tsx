@@ -1,16 +1,8 @@
 import { ActionPanel, Action, Grid, Icon } from "@raycast/api";
 import { useState, useMemo } from "react";
 import { BreadcrumbPath, QuickLink } from "../utils/types";
-import {
-  useQuickLinks,
-  resolveItemsAtPath,
-  sortItems,
-} from "../hooks/useQuickLinks";
-import {
-  GRID_COLUMNS,
-  GRID_ASPECT_RATIO,
-  GRID_INSET,
-} from "../utils/constants";
+import { useQuickLinks, resolveItemsAtPath, sortItems } from "../hooks/useQuickLinks";
+import { GRID_COLUMNS, GRID_ASPECT_RATIO, GRID_INSET } from "../utils/constants";
 import { QuickLinkGridItem } from "./QuickLinkGridItem";
 import { LinkForm } from "./LinkForm";
 import { EmptyView } from "./EmptyView";
@@ -22,11 +14,7 @@ interface FlatItem {
   searchText: string; // pre-computed: item name + parent names + keywords
 }
 
-function flattenItems(
-  items: QuickLink[],
-  parentBreadcrumb: BreadcrumbPath,
-  depth: number,
-): FlatItem[] {
+function flattenItems(items: QuickLink[], parentBreadcrumb: BreadcrumbPath, depth: number): FlatItem[] {
   const result: FlatItem[] = [];
   for (const item of items) {
     const parentNames = parentBreadcrumb.map((b) => b.name);
@@ -38,10 +26,7 @@ function flattenItems(
       searchText: searchParts.join(" ").toLowerCase(),
     });
     if (item.isContainer && item.children) {
-      const childBreadcrumb: BreadcrumbPath = [
-        ...parentBreadcrumb,
-        { id: item.id, name: item.name },
-      ];
+      const childBreadcrumb: BreadcrumbPath = [...parentBreadcrumb, { id: item.id, name: item.name }];
       result.push(...flattenItems(item.children, childBreadcrumb, depth + 1));
     }
   }
@@ -55,27 +40,15 @@ function matchesSearch(searchText: string, query: string): boolean {
   return words.every((word) => searchText.includes(word));
 }
 
-export function QuickLinksGrid({
-  breadcrumb,
-  initialSearch,
-}: {
-  breadcrumb: BreadcrumbPath;
-  initialSearch?: string;
-}) {
+export function QuickLinksGrid({ breadcrumb, initialSearch }: { breadcrumb: BreadcrumbPath; initialSearch?: string }) {
   const { data, isLoading } = useQuickLinks();
   const [search, setSearch] = useState(initialSearch ?? "");
   const isRoot = breadcrumb.length === 0;
-  const parentId =
-    breadcrumb.length > 0 ? breadcrumb[breadcrumb.length - 1].id : undefined;
-  const navTitle =
-    breadcrumb.length > 0
-      ? breadcrumb.map((b) => b.name).join(" › ")
-      : undefined;
+  const parentId = breadcrumb.length > 0 ? breadcrumb[breadcrumb.length - 1].id : undefined;
+  const navTitle = breadcrumb.length > 0 ? breadcrumb.map((b) => b.name).join(" › ") : undefined;
 
   const allFlat = useMemo(() => {
-    const items = isRoot
-      ? data.items
-      : resolveItemsAtPath(data.items, breadcrumb);
+    const items = isRoot ? data.items : resolveItemsAtPath(data.items, breadcrumb);
     return flattenItems(items, breadcrumb, 0);
   }, [data, breadcrumb, isRoot]);
 
@@ -125,34 +98,24 @@ export function QuickLinksGrid({
       {filtered.nested.length > 0 && (
         <Grid.Section title="Nested">
           {filtered.nested.map((flat) => (
-            <QuickLinkGridItem
-              key={flat.item.id}
-              item={flat.item}
-              breadcrumb={flat.breadcrumb}
-              nested
-            />
+            <QuickLinkGridItem key={flat.item.id} item={flat.item} breadcrumb={flat.breadcrumb} nested />
           ))}
         </Grid.Section>
       )}
-      {!isLoading &&
-        (filtered.main.length > 0 || filtered.nested.length > 0) && (
-          <Grid.Section title="">
-            <Grid.Item
-              id="__add_link"
-              content={Icon.Plus}
-              title="Add Quick Link"
-              actions={
-                <ActionPanel>
-                  <Action.Push
-                    icon={Icon.Plus}
-                    title="Add Quick Link"
-                    target={<LinkForm parentId={parentId} />}
-                  />
-                </ActionPanel>
-              }
-            />
-          </Grid.Section>
-        )}
+      {!isLoading && (filtered.main.length > 0 || filtered.nested.length > 0) && (
+        <Grid.Section title="">
+          <Grid.Item
+            id="__add_link"
+            content={Icon.Plus}
+            title="Add Quick Link"
+            actions={
+              <ActionPanel>
+                <Action.Push icon={Icon.Plus} title="Add Quick Link" target={<LinkForm parentId={parentId} />} />
+              </ActionPanel>
+            }
+          />
+        </Grid.Section>
+      )}
     </Grid>
   );
 }

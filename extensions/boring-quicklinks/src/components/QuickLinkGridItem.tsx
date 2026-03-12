@@ -1,13 +1,4 @@
-import {
-  Action,
-  ActionPanel,
-  confirmAlert,
-  Alert,
-  Icon,
-  Grid,
-  showToast,
-  Toast,
-} from "@raycast/api";
+import { Action, ActionPanel, confirmAlert, Alert, Icon, Grid, showToast, Toast } from "@raycast/api";
 import { QuickLink, BreadcrumbPath } from "../utils/types";
 import { resolveIcon, isUrl } from "../utils/icons";
 import { useQuickLinks } from "../hooks/useQuickLinks";
@@ -24,8 +15,7 @@ export function QuickLinkGridItem({
   breadcrumb: BreadcrumbPath;
   nested?: boolean;
 }) {
-  const { deleteItem, recordUse, moveItemTo, getContainerTargets } =
-    useQuickLinks();
+  const { deleteItem, recordUse, moveItemTo, getContainerTargets } = useQuickLinks();
   const childCount = item.children?.length ?? 0;
 
   // Include parent container names as keywords so "git neuro" finds "Neurofactor" inside "GitHub"
@@ -37,20 +27,13 @@ export function QuickLinkGridItem({
     return isUrl(item.url) ? (
       <Action.OpenInBrowser url={item.url} onOpen={() => recordUse(item.id)} />
     ) : (
-      <Action.Open
-        title="Open Link"
-        target={item.url}
-        onOpen={() => recordUse(item.id)}
-      />
+      <Action.Open title="Open Link" target={item.url} onOpen={() => recordUse(item.id)} />
     );
   }
 
   function primaryAction() {
     if (item.isContainer) {
-      const newBreadcrumb: BreadcrumbPath = [
-        ...breadcrumb,
-        { id: item.id, name: item.name },
-      ];
+      const newBreadcrumb: BreadcrumbPath = [...breadcrumb, { id: item.id, name: item.name }];
       return (
         <Action.Push
           icon={Icon.ArrowRight}
@@ -84,15 +67,10 @@ export function QuickLinkGridItem({
   function moveToSubmenu() {
     const targets = getContainerTargets(item.id);
     // Find where the item currently lives
-    const currentParentId =
-      breadcrumb.length > 0 ? breadcrumb[breadcrumb.length - 1].id : null;
+    const currentParentId = breadcrumb.length > 0 ? breadcrumb[breadcrumb.length - 1].id : null;
 
     return (
-      <ActionPanel.Submenu
-        icon={Icon.ArrowRightCircle}
-        title="Move To…"
-        shortcut={SHORTCUTS.moveTo}
-      >
+      <ActionPanel.Submenu icon={Icon.ArrowRightCircle} title="Move To…" shortcut={SHORTCUTS.moveTo}>
         {targets
           .filter((t) => t.id !== currentParentId)
           .map((target) => (
@@ -175,11 +153,7 @@ export function QuickLinkGridItem({
           </ActionPanel.Section>
           {item.url && (
             <ActionPanel.Section>
-              <Action.CopyToClipboard
-                title="Copy URL"
-                content={item.url}
-                shortcut={SHORTCUTS.copyUrl}
-              />
+              <Action.CopyToClipboard title="Copy URL" content={item.url} shortcut={SHORTCUTS.copyUrl} />
             </ActionPanel.Section>
           )}
         </ActionPanel>

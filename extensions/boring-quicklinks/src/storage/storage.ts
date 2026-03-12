@@ -13,10 +13,8 @@ const DEFAULT_DATA: QuickLinksData = {
 
 export async function loadData(): Promise<QuickLinksData> {
   try {
-    if (!fs.existsSync(DATA_FILE)) {
-      return DEFAULT_DATA;
-    }
-    const raw = fs.readFileSync(DATA_FILE, "utf-8");
+    await fs.promises.access(DATA_FILE);
+    const raw = await fs.promises.readFile(DATA_FILE, "utf-8");
     const parsed = JSON.parse(raw) as QuickLinksData;
     if (parsed.version !== 1 || !Array.isArray(parsed.items)) {
       return DEFAULT_DATA;
@@ -28,9 +26,9 @@ export async function loadData(): Promise<QuickLinksData> {
 }
 
 export async function saveData(data: QuickLinksData): Promise<void> {
-  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-  fs.writeFileSync(TEMP_FILE, JSON.stringify(data, null, 2), "utf-8");
-  fs.renameSync(TEMP_FILE, DATA_FILE);
+  await fs.promises.mkdir(path.dirname(DATA_FILE), { recursive: true });
+  await fs.promises.writeFile(TEMP_FILE, JSON.stringify(data, null, 2), "utf-8");
+  await fs.promises.rename(TEMP_FILE, DATA_FILE);
 }
 
 export async function exportData(): Promise<string> {
@@ -43,8 +41,7 @@ function validateItems(items: unknown): items is QuickLink[] {
   return items.every((item) => {
     if (typeof item !== "object" || item === null) return false;
     const obj = item as Record<string, unknown>;
-    if (typeof obj.id !== "string" || typeof obj.name !== "string")
-      return false;
+    if (typeof obj.id !== "string" || typeof obj.name !== "string") return false;
     if (obj.isContainer && obj.children) {
       return validateItems(obj.children);
     }

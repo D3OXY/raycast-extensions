@@ -1,14 +1,4 @@
-import {
-  Action,
-  ActionPanel,
-  Clipboard,
-  Icon,
-  List,
-  showToast,
-  Toast,
-  confirmAlert,
-  Alert,
-} from "@raycast/api";
+import { Action, ActionPanel, Clipboard, Icon, List, showToast, Toast, confirmAlert, Alert } from "@raycast/api";
 import { exportData, importData } from "./storage/storage";
 
 export default function ImportExport() {
@@ -47,8 +37,7 @@ export default function ImportExport() {
               onAction={async () => {
                 const confirmed = await confirmAlert({
                   title: "Import Quick Links?",
-                  message:
-                    "This will replace all existing quick links with the data from your clipboard.",
+                  message: "This will replace all existing quick links with the data from your clipboard.",
                   primaryAction: {
                     title: "Import",
                     style: Alert.ActionStyle.Destructive,

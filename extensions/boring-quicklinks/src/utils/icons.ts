@@ -1,4 +1,5 @@
 import { Icon, Image, environment } from "@raycast/api";
+import { getFavicon } from "@raycast/utils";
 import { QuickLink, ItemIcon } from "./types";
 import * as simpleIcons from "simple-icons";
 
@@ -7,25 +8,11 @@ export function isUrl(str: string): boolean {
 }
 
 export function isFilePath(str: string): boolean {
-  return (
-    str.startsWith("/") || str.startsWith("~") || str.startsWith("file://")
-  );
-}
-
-function getDomain(url: string): string {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return url;
-  }
+  return str.startsWith("/") || str.startsWith("~") || str.startsWith("file://");
 }
 
 function highResFavicon(url: string): Image.ImageLike {
-  const domain = getDomain(url);
-  return {
-    source: `https://icon.horse/icon/${domain}`,
-    fallback: Icon.Globe,
-  };
+  return getFavicon(url, { fallback: Icon.Globe });
 }
 
 const brandCache = new Map<string, string>();
@@ -53,8 +40,7 @@ function resolveItemIcon(icon: ItemIcon, color?: string): Image.ImageLike {
     case "emoji":
       return icon.value;
     case "raycast": {
-      const rcIcon =
-        (Icon as Record<string, Image.ImageLike>)[icon.value] ?? Icon.Link;
+      const rcIcon = (Icon as Record<string, Image.ImageLike>)[icon.value] ?? Icon.Link;
       if (color) {
         return {
           source: rcIcon as Image.Source,
